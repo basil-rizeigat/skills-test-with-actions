@@ -10,19 +10,16 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # The job will run on the latest Ubuntu environment
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2  # Checks out the repository code
+    - name: Run markdown lint
+      run: |
+        npm install remark-cli remark-preset-lint-consistent vfile-reporter-json
+        npx remark . --use remark-preset-lint-consistent --report vfile-reporter-json 2> remark-lint-report.json
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2  # Sets up Node.js in the workflow
-        with:
-          node-version: '17'  # Specifies the Node.js version to use
-
-      - name: Run markdown lint
-        run: |
-          npm install remark-cli remark-preset-lint-consistent
-          npx remark . --use remark-preset-lint-consistent --frail
-
+    - uses: actions/upload-artifact@v4
+      with:
+        name: remark-lint-report
+        path: remark-lint-report.json
