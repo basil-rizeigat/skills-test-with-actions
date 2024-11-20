@@ -1,0 +1,28 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - main  # Trigger this workflow on pushes to the 'main' branch
+  pull_request:
+    branches:
+      - main  # Trigger on pull requests to the 'main' branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # The job will run on the latest Ubuntu environment
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # Checks out the repository code
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2  # Sets up Node.js in the workflow
+        with:
+          node-version: '14'  # Specifies the Node.js version to use
+
+      - name: Run markdown lint
+        run: |
+          npm install remark-cli remark-preset-lint-consistent
+          npx remark . --use remark-preset-lint-consistent --frail
+
